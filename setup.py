@@ -13,6 +13,7 @@ setup(
     entry_points={
         'console_scripts': [
             'task-manager-api = {0}.__main__:main'.format(PACKAGE_NAME),
+            'task-manager-db = {0}.storage.db.__main__:main'.format(PACKAGE_NAME)
         ]
     },
     python_requires='>=3.10'
