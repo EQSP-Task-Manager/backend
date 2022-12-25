@@ -1,0 +1,12 @@
+---
+
+- name: Gather facts
+  hosts: yc-server
+  gather_facts: true
+
+- name: Ensure Docker is installed and running
+  hosts: yc-server
+  become: yes
+  gather_facts: no
+  roles:
+    - docker
