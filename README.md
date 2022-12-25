@@ -9,7 +9,6 @@
 
 ![CI/CD](https://github.com/EQSP-Task-Manager/backend/actions/workflows/ci-cd-main.yml/badge.svg?branch=main)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
-[![GitHub latest commit](https://badgen.net/github/last-commit/Naereen/Strapdown.js)](https://github.com/EQSP-Task-Manager/backend/commit/)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 ## Table of content
