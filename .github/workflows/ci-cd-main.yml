@@ -58,6 +58,9 @@ jobs:
         run: |
           pip install pytest pytest-asyncio
           pytest tests/
+      - name: Coverage
+        run: |
+          pytest --cov
 
   build-and-push:
     runs-on: ubuntu-latest

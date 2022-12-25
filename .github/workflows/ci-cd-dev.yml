@@ -58,3 +58,6 @@ jobs:
         run: |
           pip install pytest pytest-asyncio
           pytest tests/
+      - name: Coverage
+        run: |
+          pytest --cov
