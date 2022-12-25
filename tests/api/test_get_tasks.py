@@ -3,7 +3,7 @@ from unittest.mock import Mock, AsyncMock
 import pytest
 from aiohttp.test_utils import TestClient
 
-from backend.models import Task, TaskImportance, UserInfo
+from backend.models import Task, UserInfo
 
 DEVICE_ID = 'df963423-9585-4423-b4d7-853af30b029f'
 OAUTH_TOKEN = 'y0_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
