@@ -1,0 +1,68 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: maximpr
+  IMAGE_NAME: task-manager-api
+  CONTAINER_NAME: task-manager-api
+
+jobs:
+
+  run-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Lint the project
+        run: |
+          pip install flake8
+          flake8 .
+      - name: Linting failed
+        if: ${{ failure() }}
+        run: |
+          echo "Linting failed" >> $GITHUB_STEP_SUMMARY
+  
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: run-linter
+
+    services:
+      test-db:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: db
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          pip install pytest pytest-asyncio
+          pytest tests/
+      - name: Tests failed
+        if: ${{ failure() }}
+        run: |
+          echo "Tests failed" >> $GITHUB_STEP_SUMMARY
