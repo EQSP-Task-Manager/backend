@@ -131,3 +131,5 @@ dmypy.json
 # Project specific files/directories
 .idea/
 config.yml
+ansible/vars.yml
+ansible/id_ed25519
