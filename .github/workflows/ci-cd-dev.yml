@@ -28,10 +28,6 @@ jobs:
         run: |
           pip install flake8
           flake8 .
-      - name: Linting failed
-        if: ${{ failure() }}
-        run: |
-          echo "Linting failed" >> $GITHUB_STEP_SUMMARY
   
   run-tests:
     runs-on: ubuntu-latest
@@ -62,7 +58,3 @@ jobs:
         run: |
           pip install pytest pytest-asyncio
           pytest tests/
-      - name: Tests failed
-        if: ${{ failure() }}
-        run: |
-          echo "Tests failed" >> $GITHUB_STEP_SUMMARY

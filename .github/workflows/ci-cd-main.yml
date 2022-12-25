@@ -28,10 +28,6 @@ jobs:
         run: |
           pip install flake8
           flake8 .
-      - name: Linting failed
-        if: ${{ failure() }}
-        run: |
-          echo "Linting failed" >> $GITHUB_STEP_SUMMARY
   
   run-tests:
     runs-on: ubuntu-latest
@@ -62,10 +58,6 @@ jobs:
         run: |
           pip install pytest pytest-asyncio
           pytest tests/
-      - name: Tests failed
-        if: ${{ failure() }}
-        run: |
-          echo "Tests failed" >> $GITHUB_STEP_SUMMARY
 
   build-and-push:
     runs-on: ubuntu-latest
@@ -86,6 +78,19 @@ jobs:
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: Job failed
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            Repository: ${{ github.repository }}
+            Flow triggered by: ${{ github.actor }}
+            
+            Build and push failed
+
+            Flow: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   provision-server:
     runs-on: ubuntu-latest
@@ -115,6 +120,19 @@ jobs:
         run: |
           cd ansible/
           ansible-playbook playbook.yml --extra-vars "@vars.yml"
+      - name: Job failed
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            Repository: ${{ github.repository }}
+            Flow triggered by: ${{ github.actor }}
+            
+            Server provisioning failed
+
+            Flow: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -145,6 +163,19 @@ jobs:
             --restart always \
             --name ${{ env.CONTAINER_NAME }} \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      - name: Job failed
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            Repository: ${{ github.repository }}
+            Flow triggered by: ${{ github.actor }}
+            
+            Deployment failed
+
+            Flow: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   notify-about-release:
     runs-on: ubuntu-latest
@@ -161,4 +192,4 @@ jobs:
             Flow triggered by: ${{ github.actor }}
 
             Commit message: ${{ github.event.commits[0].message }}
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            Changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
