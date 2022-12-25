@@ -1,0 +1,10 @@
+api-host: 0.0.0.0
+api-port: 8080
+
+db-user: postgres
+db-password: postgres
+db-host: localhost
+db-port: 5432
+db-name: task-manager
+
+log-level: INFO
