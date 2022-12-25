@@ -8,6 +8,9 @@
 > This is the part of the [Done App project](https://github.com/EQSP-Task-Manager)
 
 ![CI/CD](https://github.com/EQSP-Task-Manager/backend/actions/workflows/ci-cd-main.yml/badge.svg?branch=main)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+[![GitHub latest commit](https://badgen.net/github/last-commit/Naereen/Strapdown.js)](https://github.com/EQSP-Task-Manager/backend/commit/)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 ## Table of content
 - [About](#about)
@@ -17,6 +20,7 @@
   - [Without Docker](#without-docker)
   - [With Docker](#with-docker)
 - [Deployment](#deploy)
+- [License](#license)
 
 
 ## 📎 About application <a name="about"></a>
@@ -85,3 +89,7 @@ DB_USER=postgres DB_PASSWORD=postgres docker-compose up --build
 
 ## Deployment <a name="deploy"></a>
 [Yandex Cloud](https://cloud.yandex.ru/) was used to deploy backend to the server.
+
+## License <a name="license"></a>
+Done App Backend is licensed under the MIT License.
+This means that you are free to use, modify, and distribute the software as long as you include the appropriate credit and follow the terms of the license.
