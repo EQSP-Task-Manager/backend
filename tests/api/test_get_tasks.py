@@ -24,7 +24,6 @@ USER_INFO = UserInfo(
 
 test_data = [
     (
-        '1',
         [
             Task(
                 id='6ef08e6c-586d-4062-ba8d-1a6c79b062dc',
@@ -58,10 +57,9 @@ test_data = [
 ]
 
 
-@pytest.mark.parametrize('user_id,stub_tasks,stub_revision,expected', test_data)
+@pytest.mark.parametrize('stub_tasks,stub_revision,expected', test_data)
 async def test_get_tasks(
         client: TestClient,
-        user_id: str,
         stub_tasks: list[Task],
         stub_revision: int,
         expected: dict
