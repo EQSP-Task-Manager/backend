@@ -7,7 +7,7 @@
 
 > This is the part of the [Done App project](https://github.com/EQSP-Task-Manager)
 
-![CI/CD](https://github.com/EQSP-Task-Manager/backend/blob/main/.github/workflows/ci-cd-main.yml/badge.svg?branch=main)
+![CI/CD](https://github.com/EQSP-Task-Manager/backend/actions/workflows/ci-cd-main.yml/badge.svg?branch=dev)
 
 ## Table of content
 - [About](#about)
