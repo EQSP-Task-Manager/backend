@@ -60,4 +60,5 @@ jobs:
           pytest tests/
       - name: Coverage
         run: |
+          pip install pytest-cov
           pytest --cov
