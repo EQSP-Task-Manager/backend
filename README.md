@@ -8,15 +8,18 @@
 > This is the part of the [Done App project](https://github.com/EQSP-Task-Manager)
 
 ![CI/CD](https://github.com/EQSP-Task-Manager/backend/actions/workflows/ci-cd-main.yml/badge.svg?branch=main)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 ## Table of content
 - [About](#about)
 - [Getting started](#getting-started)
-  - [Techical stack](#tech-stack)
-- [Run bot](#run)
+  - [Technical stack](#tech-stack)
+- [How to run](#run)
   - [Without Docker](#without-docker)
   - [With Docker](#with-docker)
 - [Deployment](#deploy)
+- [License](#license)
 
 
 ## 📎 About application <a name="about"></a>
@@ -51,13 +54,13 @@ For the sake of convenience of development, several powerful libraries are utili
   pip install -r requirements.txt
   ```
 
-- Another important requirements is to have PostgreSQL server up and running.
+- Another requirement is to have PostgreSQL server up and running.
 
 #### Start
 
-To start the backend, one needs to set up the arguments.
+To start the backend, one needs to provide the arguments.
 Currently, there are the following arguments needed:
-`API_HOST`, `API_PORT`, `DB_USER` `DB_PASSWORD`, `DB_HOST`, `DB_PORT` and `DB_NAME`.
+`API_HOST`, `API_PORT`, `DB_USER` `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME` and `LOG_LEVEL`.
 All of them have default values, so let us further omit some parameters.
 
 To get the description on arguments passing, one can type `python -m backend --help`.
@@ -65,15 +68,13 @@ To get the description on arguments passing, one can type `python -m backend --h
 There are several ways how to pass these arguments:
 
   1) Command line  
-     Example:  
      ```bash
      python -m backend --db-user postgres --db-password postgres
      ```
 
   2) Config file  
      Create `config.yml` file in the project directory and fill it with data (refer to `config-example.yml` for the example).
- 
-To run, execute the following command: `python -m backend`.
+     To run, execute the following: `python -m backend`
    
 ### Run using Docker <a name="with-docker"></a>
 
@@ -85,3 +86,11 @@ DB_USER=postgres DB_PASSWORD=postgres docker-compose up --build
 
 ## Deployment <a name="deploy"></a>
 [Yandex Cloud](https://cloud.yandex.ru/) was used to deploy backend to the server.
+
+![Virtual machine instance](media/vm.png)
+
+![PostgreSQL cluster](media/postgresql.png)
+
+## License <a name="license"></a>
+Done App Backend is licensed under the MIT License.
+This means that you are free to use, modify, and distribute the software as long as you include the appropriate credit and follow the terms of the license.
