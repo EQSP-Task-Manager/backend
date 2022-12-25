@@ -66,3 +66,99 @@ jobs:
         if: ${{ failure() }}
         run: |
           echo "Tests failed" >> $GITHUB_STEP_SUMMARY
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Push image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+  provision-server:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Create file with private SSH key
+        run: |
+          cd ansible/
+          touch id_ed25519 && chmod 600 id_ed25519
+          echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > id_ed25519
+      - name: Compose YML file with container specific variables
+        run: |
+          cd ansible/
+          echo "ansible_user:             ${{ secrets.SERVER_USER }}" >> vars.yml
+          echo "ansible_private_key_file: id_ed25519" >> vars.yml
+          echo "REGISTRY_USER:            ${{ secrets.REGISTRY_USER }}" >> vars.yml
+          echo "REGISTRY_PASSWORD:        ${{ secrets.REGISTRY_PASSWORD }}" >> vars.yml
+      - name: Install Ansible and ping server
+        run: |
+          cd ansible/
+          pip install ansible
+          ansible -m ping yc-server --extra-vars "@vars.yml"
+      - name: Run Ansible playbook
+        run: |
+          cd ansible/
+          ansible-playbook playbook.yml --extra-vars "@vars.yml"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: provision-server
+    if: github.event_name == 'push'
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          envs: IMAGE_NAME,REGISTRY,CONTAINER_NAME
+          script: |
+            # Stop running container
+            docker ps | grep ${{ env.CONTAINER_NAME }} && docker stop ${{ env.CONTAINER_NAME }}
+            # Remove old container
+            docker ps -a | grep ${{ env.CONTAINER_NAME }} && docker rm ${{ env.CONTAINER_NAME }}
+            # Run new container from a new image
+            docker run \
+            -e DB_USER=${{ secrets.DB_USER }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e DB_HOST=${{ secrets.DB_HOST }} \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
+            -e DB_NAME=${{ secrets.DB_NAME }} \
+            -p 8080:8080 \
+            -dti \
+            --restart always \
+            --name ${{ env.CONTAINER_NAME }} \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  notify-about-release:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.event_name == 'push'
+    steps:
+      - name: Send message to Telegram chat
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            Repository: ${{ github.repository }}
+            Flow triggered by: ${{ github.actor }}
+
+            Commit message: ${{ github.event.commits[0].message }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
