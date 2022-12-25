@@ -47,7 +47,7 @@ test_data = [
                     'tags': [],
                     'created_at': 1671958915,
                     'changed_at': 1671958915,
-                    'importance': TaskImportance.BASIC.value,
+                    'importance': 'basic',
                     'deadline': None,
                     'color': None
                 }
