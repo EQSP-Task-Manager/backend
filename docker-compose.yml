@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+
+  api:
+    container_name: task-manager-api
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: task-manager-db
+      DB_PORT: 5432
+      DB_NAME: task-manager
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  db:
+    container_name: task-manager-db
+    image: postgres:14
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: task-manager
+    ports:
+      - "6432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:
